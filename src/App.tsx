@@ -3,8 +3,10 @@ import { Shield, Loader2, Send, AlertCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { analyzeIncident, CyberReport } from './services/gemini';
 import { ReportView } from './components/ReportView';
+import AetherFlowHero from './components/ui/aether-flow-hero';
 
 export default function App() {
+  const [showHero, setShowHero] = useState(true);
   const [incidentDescription, setIncidentDescription] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [report, setReport] = useState<CyberReport | null>(null);
@@ -29,6 +31,10 @@ export default function App() {
     }
   };
 
+  if (showHero) {
+    return <AetherFlowHero onGetStarted={() => setShowHero(false)} />;
+  }
+
   return (
     <div className="min-h-screen bg-cyber-dark text-slate-300 font-sans selection:bg-cyber-neon selection:text-black flex flex-col relative overflow-hidden">
       {/* Background Grid */}
@@ -42,14 +48,21 @@ export default function App() {
       {/* Navbar */}
       <header className="border-b border-cyber-border bg-cyber-dark/80 backdrop-blur-md sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2">
+          <button 
+            onClick={() => {
+              setShowHero(true);
+              setReport(null);
+              setIncidentDescription('');
+            }}
+            className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+          >
             <div className="p-1.5 bg-cyber-neon/10 rounded-lg">
               <Shield className="w-6 h-6 text-cyber-neon" />
             </div>
             <span className="font-display font-bold text-xl text-white tracking-tight">
               CyberGuard <span className="text-cyber-neon">AI</span>
             </span>
-          </div>
+          </button>
           <div className="text-xs font-mono text-slate-500 hidden sm:block">
             AI Cybercrime Advisor System v1.0
           </div>
