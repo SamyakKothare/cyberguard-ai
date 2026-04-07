@@ -1,8 +1,7 @@
-"use client";
-
 import React from 'react';
 import { motion } from 'motion/react';
-import { ArrowRight, ShieldCheck } from 'lucide-react';
+import { ShieldCheck } from 'lucide-react';
+import { GetStartedButtonAnimated } from '@/components/ui/get-started-button-animated';
 
 interface AetherFlowHeroProps {
     onGetStarted: () => void;
@@ -218,13 +217,7 @@ const AetherFlowHero = ({ onGetStarted }: AetherFlowHeroProps) => {
                     initial="hidden"
                     animate="visible"
                 >
-                    <button 
-                        onClick={onGetStarted}
-                        className="group px-8 py-4 bg-cyber-neon text-black font-bold rounded-xl shadow-[0_0_20px_rgba(0,240,255,0.3)] hover:shadow-[0_0_30px_rgba(0,240,255,0.5)] transition-all duration-300 flex items-center gap-2 mx-auto"
-                    >
-                        Get Started
-                        <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
-                    </button>
+                    <GetStartedButtonAnimated onClick={onGetStarted} />
                 </motion.div>
             </div>
         </div>
