@@ -68,6 +68,56 @@ const reportSchema: Schema = {
   ],
 };
 
+export interface RiskScoreReport {
+  score: number;
+  riskLevel: 'Low Risk' | 'Medium Risk' | 'High Risk';
+  weaknesses: string[];
+  recommendations: string[];
+  explanation: string;
+}
+
+const riskScoreSchema: Schema = {
+  type: Type.OBJECT,
+  properties: {
+    score: { type: Type.INTEGER },
+    riskLevel: { type: Type.STRING, enum: ['Low Risk', 'Medium Risk', 'High Risk'] },
+    weaknesses: { type: Type.ARRAY, items: { type: Type.STRING } },
+    recommendations: { type: Type.ARRAY, items: { type: Type.STRING } },
+    explanation: { type: Type.STRING },
+  },
+  required: ["score", "riskLevel", "weaknesses", "recommendations", "explanation"],
+};
+
+export async function analyzeRiskScore(answers: Record<string, string>): Promise<RiskScoreReport> {
+  const prompt = `
+You are CyberGuard AI, an AI cybersecurity assistant.
+Analyze the following user answers to a cybersecurity habits questionnaire.
+Calculate a Cyber Safety Score (0–100), assign a Risk Level, identify weaknesses, and provide recommendations.
+
+Questionnaire Answers:
+${Object.entries(answers).map(([q, a]) => `- ${q}: ${a}`).join('\n')}
+
+Output a structured report in JSON format.
+`;
+
+  const response = await ai.models.generateContent({
+    model: 'gemini-2.5-flash',
+    contents: prompt,
+    config: {
+      responseMimeType: 'application/json',
+      responseSchema: riskScoreSchema,
+      temperature: 0.2,
+    }
+  });
+
+  const text = response.text;
+  if (!text) {
+    throw new Error("No response from AI");
+  }
+
+  return JSON.parse(text) as RiskScoreReport;
+}
+
 export async function analyzeIncident(description: string): Promise<CyberReport> {
   const prompt = `
 You are CYBERGUARD AI — an advanced AI Cybercrime Advisor.
